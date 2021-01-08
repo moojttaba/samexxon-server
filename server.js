@@ -10,7 +10,7 @@ process.on("uncaughtException", (err) => {
 dotenv.config({ path: "./config.env" });
 const app = require("./app");
 
-const DB = process.env.DATABASE.replace(
+const DB = process.env.DATABASE_LOCAL.replace(
   "<PASSWORD>",
   process.env.DATABASE_PASSWORD
 );
@@ -22,7 +22,10 @@ mongoose
     useFindAndModify: false,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("DB connection successful!"));
+  .then((con) => {
+    console.log("DB connection successful!");
+    //console.log(con.connections);
+  });
 
 const port = process.env.PORT || 4000;
 const server = app.listen(port, () => {
@@ -37,10 +40,9 @@ process.on("unhandledRejection", (err) => {
   });
 });
 
-process.on('SIGTERM', () => {
-  console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+process.on("SIGTERM", () => {
+  console.log("👋 SIGTERM RECEIVED. Shutting down gracefully");
   server.close(() => {
-    console.log('💥 Process terminated!');
+    console.log("💥 Process terminated!");
   });
 });
-
